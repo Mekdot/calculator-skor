@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Skor TOEFL</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #004e92, #000428);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .container {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    padding: 30px 40px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  }
+
+  .section {
+    margin-bottom: 25px;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  select {
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    height: 38px;
+    overflow-y: auto;
+  }
+
+  select:focus {
+    background: rgba(255,255,255,0.25);
+    outline: none;
+  }
+
+  /* Biar dropdown-nya gak terlalu tinggi di HP */
+  select option {
+    color: #000;
+    font-size: 0.95rem;
+  }
+
+  .score-display {
+    text-align: right;
+    margin-top: 5px;
+    font-size: 0.95rem;
+    color: #ffd369;
+    min-height: 20px;
+  }
+
+  button {
+    width: 100%;
+    background: #ffd369;
+    color: #000;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background: #ffc107;
+  }
+
+  .result {
+    margin-top: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    color: #00ffab;
+    min-height: 30px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  footer {
+    margin-top: 30px;
+    font-size: 0.85rem;
+    opacity: 0.7;
+  }
+
+  .rainbow-text {
+      background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet, red);
+      background-size: 400%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: rainbow 6s linear infinite;
+      font-weight: bold;
+    }
+
+    @keyframes rainbow {
+      50% { background-position: 0%; }
+      50% { background-position: 100%; }
+    }
+	
+  /* Responsif di layar kecil */
+  @media (max-width: 500px) {
+    .container {
+      padding: 20px;
+    }
+    h1 {
+      font-size: 1.3rem;
+    }
+    button {
+      font-size: 0.95rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <h1>Kalkulator Skor TOEFL</h1>
+  <div class="container">
+    <div class="section">
+      <label for="listening">Listening</label>
+      <select id="listening">
+        <option value="">Pilih jumlah benar...</option>
+      </select>
+      <div id="listeningScore" class="score-display"></div>
+    </div>
+
+    <div class="section">
+      <label for="structure">Structure</label>
+      <select id="structure">
+        <option value="">Pilih jumlah benar...</option>
+      </select>
+      <div id="structureScore" class="score-display"></div>
+    </div>
+
+    <div class="section">
+      <label for="reading">Reading</label>
+      <select id="reading">
+        <option value="">Pilih jumlah benar...</option>
+      </select>
+      <div id="readingScore" class="score-display"></div>
+    </div>
+
+    <button onclick="hitungSkor()">Hitung Skor</button>
+    <div id="result" class="result"></div>
+  </div>
+
+  <footer>
+    © 2025 Kalkulator By <span class="rainbow-text">Lockbit</span>
+  </footer>
+
+<script>
+const listeningTable = {
+  50:68,49:67,48:66,47:65,46:63,45:62,44:61,43:60,42:59,41:58,
+  40:57,39:57,38:56,37:55,36:54,35:54,34:53,33:53,32:52,31:52,
+  30:51,29:50,28:49,27:49,26:48,25:48,24:47,23:47,22:46,21:45,
+  20:45,19:44,18:43,17:42,16:41,15:41,14:39,13:38,12:37,11:35,
+  10:33,9:32,8:32,7:31,6:30,5:29,4:28,3:27,2:26,1:25
+};
+
+const structureTable = {
+  40:68,39:68,38:65,37:63,36:61,35:60,34:58,33:57,32:56,31:55,
+  30:54,29:53,28:52,27:51,26:50,25:49,24:48,23:47,22:46,21:45,
+  20:44,19:43,18:42,17:41,16:40,15:40,14:38,13:37,12:36,11:35,
+  10:33,9:31,8:29,7:27,6:26,5:25,4:23,3:22,2:21,1:20
+};
+
+const readingTable = {
+  50:67,49:66,48:65,47:63,46:61,45:60,44:59,43:58,42:57,41:56,
+  40:55,39:54,38:54,37:53,36:52,35:52,34:51,33:50,32:49,31:48,
+  30:48,29:47,28:46,27:46,26:45,25:44,24:43,23:43,22:42,21:41,
+  20:40,19:39,18:38,17:37,16:36,15:35,14:34,13:33,12:32,11:31,
+  10:30,9:29,8:28,7:28,6:27,5:26,4:25,3:23,2:23,1:22
+};
+
+function isiSelect(id, jumlah) {
+  const select = document.getElementById(id);
+  for (let i = 1; i <= jumlah; i++) {
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = i;
+    select.appendChild(option);
+  }
+}
+
+isiSelect("listening", 50);
+isiSelect("structure", 40);
+isiSelect("reading", 50);
+
+function tampilkanSkor(selectId, table, outputId) {
+  const val = parseInt(document.getElementById(selectId).value);
+  const skor = table[val];
+  document.getElementById(outputId).textContent = val ? `Skor: ${skor}` : "";
+}
+
+document.getElementById("listening").addEventListener("change", () => tampilkanSkor("listening", listeningTable, "listeningScore"));
+document.getElementById("structure").addEventListener("change", () => tampilkanSkor("structure", structureTable, "structureScore"));
+document.getElementById("reading").addEventListener("change", () => tampilkanSkor("reading", readingTable, "readingScore"));
+
+function hitungSkor() {
+  const l = listeningTable[document.getElementById("listening").value] || 0;
+  const s = structureTable[document.getElementById("structure").value] || 0;
+  const r = readingTable[document.getElementById("reading").value] || 0;
+
+  if (!l || !s || !r) {
+    document.getElementById("result").style.color = "#ff5555";
+    document.getElementById("result").textContent = "Lengkapi semua kolom sebelum menghitung skor!";
+    return;
+  }
+
+  const total = ((l + s + r) * 10 / 3).toFixed(0);
+  const resultEl = document.getElementById("result");
+  resultEl.style.color = "#00ffab";
+  resultEl.textContent = `Total Skor Anda: ${total}`;
+}
+</script>
+
+</body>
+</html>
+
